@@ -1,0 +1,21 @@
+CIVIC DATA ECONOMICS: STATISTICAL & ECONOMETRIC SUMMARY
+========================================================
+
+Sample Size (N): 262 valid ZCTAs (Total Universe: 262)
+
+1. BIVARIATE REGRESSION SPECIFICATION:
+   Formula: PaidPrepRate = 53.2863 + 3.7532*(EITC_Rate)
+   Pearson r: 0.1370 (p = 2.6583e-02)
+   R-Squared: 0.0188 (3.2% explained variance)
+   Econometric Note: Significant p-value with low R² indicates severe Omitted Variable Bias (OVB).
+
+2. MULTIVARIATE REGRESSION SPECIFICATION (HC1 Robust SE):
+   Multivariate R-Squared: 0.0188 (Adjusted R²: 0.0150)
+   Coefficients & P-Values:
+     - const               :    53.2863  (p = 0.0000e+00)
+     - eitc_rate_pct       :     3.7532  (p = 1.7668e-02)
+
+3. CAPITAL LEAKAGE TAKEAWAY:
+   Total State EITC Capital Leakage: $980,416.22
+   Q4 High-EITC Quartile Leakage:     $581,631.38 (59.3% of state total)
+   Policy Implication: Commercial tax prep fees act as a regressive levy concentrated in high-need ZCTAs.
