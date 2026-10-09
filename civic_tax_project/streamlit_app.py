@@ -7,21 +7,17 @@ import streamlit as st
 import folium
 from streamlit_folium import st_folium
 
-# 1. Page configuration MUST be the first Streamlit command
 st.set_page_config(
     page_title="CT Civic Tax Access Dashboard",
-    page_icon="🏛️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 2. Define dynamic paths using pathlib
 BASE_DIR = Path(__file__).resolve().parent
 FEATURE_MATRIX_PATH = BASE_DIR / "data" / "processed" / "02_feature_matrix.csv"
 LOCAL_GEOJSON_PATH = BASE_DIR / "data" / "raw" / "ct_zctas.geojson"
 REMOTE_GEOJSON_URL = "https://raw.githubusercontent.com/OpenDataDE/State-zip-code-GeoJSON/master/ct_connecticut_zip_codes_geo.min.json"
 
-# 3. Data loader function
 @st.cache_data
 def load_data():
     if not FEATURE_MATRIX_PATH.exists():
@@ -31,7 +27,6 @@ def load_data():
     df = pd.read_csv(FEATURE_MATRIX_PATH)
     df['zip_code'] = df['zip_code'].astype(str).str.zfill(5)
     
-    # Automatically fetch and save local GeoJSON if missing
     if not LOCAL_GEOJSON_PATH.exists():
         LOCAL_GEOJSON_PATH.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -46,10 +41,8 @@ def load_data():
             st.error(f"Failed to fetch GeoJSON geometry: {e}")
             st.stop()
 
-    # Read local boundary geometries
     gdf_ct = gpd.read_file(LOCAL_GEOJSON_PATH)
     
-    # Standardize ZIP code column name
     zip_col_candidates = ['ZCTA5CE10', 'ZCTA5CE20', 'ZIP', 'zip', 'ZCTA', 'ZCTA5']
     matched_col = next((c for c in zip_col_candidates if c in gdf_ct.columns), None)
     if matched_col:
@@ -60,39 +53,31 @@ def load_data():
 
     gdf_ct['zip_code'] = gdf_ct['zip_code'].astype(str).str.zfill(5)
 
-    # Merge economic feature matrix into spatial boundary dataset
     gdf_merged = gdf_ct.merge(df, on='zip_code', how='inner')
     
-    # Ensure EPSG:4326 CRS for Folium map rendering
     if gdf_merged.crs != "EPSG:4326":
         gdf_merged = gdf_merged.to_crs("EPSG:4326")
         
     return gdf_merged, df
 
-# Load Processed Data
 gdf, df_raw = load_data()
 
-# -----------------------------------------------------------------------------
-# SIDEBAR CONTROLS
-# -----------------------------------------------------------------------------
-st.sidebar.title("🏛️ Civic Tax Access")
+
+st.sidebar.title("Civic Tax Access")
 st.sidebar.markdown("**Connecticut Community Tax Access Index**")
 
 zip_options = ["All Connecticut ZCTAs"] + sorted(gdf['zip_code'].unique().tolist())
 selected_zip = st.sidebar.selectbox("Search ZIP Code / ZCTA:", zip_options)
 
 st.sidebar.divider()
-st.sidebar.markdown("### 📐 Model Parameters")
+st.sidebar.markdown("### Model Parameters")
 st.sidebar.info(
     "**Est. Prep Fee:** $250 / return\n\n"
     "**Target ZIP:** 06608 (Bridgeport, CT)\n\n"
     "**Data Sources:** IRS SOI Tax Data (2021) & Census ACS"
 )
 
-# -----------------------------------------------------------------------------
-# MAIN DASHBOARD CONTENT
-# -----------------------------------------------------------------------------
-st.title("🏛️ Connecticut Civic Tax Access & EITC Leakage Index")
+st.title("Connecticut Civic Tax Access & EITC Leakage Index")
 st.markdown(
     "Quantifying commercial tax preparation reliance, EITC capital extraction, "
     "and structural tax assistance gaps across Connecticut's ZCTAs."
@@ -100,7 +85,7 @@ st.markdown(
 
 if selected_zip != "All Connecticut ZCTAs":
     target_data = gdf[gdf['zip_code'] == selected_zip].iloc[0]
-    st.subheader(f"📊 Access Metrics for ZIP Code: {selected_zip}")
+    st.subheader(f"Access Metrics for ZIP Code: {selected_zip}")
     
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Total Tax Returns", f"{int(target_data['total_returns']):,}")
@@ -108,7 +93,7 @@ if selected_zip != "All Connecticut ZCTAs":
     m3.metric("Paid Preparer Reliance", f"{target_data['paid_prep_rate_pct']:.1f}%")
     m4.metric("Est. Capital Leakage", f"${target_data['capital_leakage_dollars']:,.0f}")
 else:
-    st.subheader("📊 State-Level Aggregates (Connecticut)")
+    st.subheader("State Level Aggregates (Connecticut)")
     m1, m2, m3, m4 = st.columns(4)
     total_state_returns = df_raw['total_returns'].sum()
     total_state_leakage = df_raw['capital_leakage_dollars'].sum()
@@ -122,10 +107,7 @@ else:
 
 st.divider()
 
-# -----------------------------------------------------------------------------
-# INTERACTIVE MAP (FOLIUM)
-# -----------------------------------------------------------------------------
-st.subheader("🗺️ Interactive Map: Estimated EITC Capital Leakage ($)")
+st.subheader("Estimated EITC Capital Leakage ($)")
 
 map_center = [41.6032, -72.6877]
 zoom = 9
@@ -178,7 +160,7 @@ if selected_zip != "All Connecticut ZCTAs":
 st_folium(m, width="100%", height=580, returned_objects=[])
 
 st.divider()
-st.subheader("📤 Embed Map on Substack / Policy Reports")
+st.subheader("Embed Map on Substack / Policy Reports")
 if st.button("Generate HTML Map Export"):
     reports_dir = BASE_DIR / "reports"
     reports_dir.mkdir(exist_ok=True)
