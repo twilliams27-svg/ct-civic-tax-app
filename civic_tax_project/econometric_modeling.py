@@ -14,14 +14,11 @@ def run_econometric_analysis():
     df = pd.read_csv(INPUT_FEATURE_PATH)
     df['zip_code'] = df['zip_code'].astype(str).str.zfill(5)
     
-    print("==================================================")
+    print("==============================================")
     print(" STEP 3: ECONOMETRIC MODELING & STATISTICAL ANALYSIS")
     print(f" Dataset Universe: N = {len(df)} Connecticut ZIP Codes")
-    print("==================================================\n")
+    print("=============================================\n")
 
-    # ----------------------------------------------------
-    # 1. BIVARIATE OLS REGRESSION (Baseline)
-    # ----------------------------------------------------
     df_bivariate = df.dropna(subset=['eitc_rate_pct', 'paid_prep_rate_pct']).copy()
     X_var = df_bivariate['eitc_rate_pct']
     Y_var = df_bivariate['paid_prep_rate_pct']
@@ -29,28 +26,24 @@ def run_econometric_analysis():
     pearson_r, pearson_p = stats.pearsonr(X_var, Y_var)
     X_ols = sm.add_constant(X_var)
     
-    # Fit with Robust Standard Errors (HC1)
+    
     bivariate_model = sm.OLS(Y_var, X_ols).fit(cov_type='HC1')
 
     print("[1] BIVARIATE OLS REGRESSION (Baseline)")
-    print("--------------------------------------------------")
+    print("----------------------------------------------")
     print(f" Formula: PaidPrepRate = {bivariate_model.params['const']:.2f} + {bivariate_model.params['eitc_rate_pct']:.2f}*(EITC_Rate)")
     print(f" R-Squared: {bivariate_model.rsquared:.4f} (Explains {bivariate_model.rsquared*100:.2f}% of variance)")
     print(f" p-value:   {bivariate_model.f_pvalue:.4e}")
     print("\n")
 
-    # ----------------------------------------------------
-    # 2. MULTIVARIATE OLS REGRESSION (Dynamic Controls)
-    # ----------------------------------------------------
     print("[2] MULTIVARIATE OLS REGRESSION (Demographic & Economic Controls)")
-    print("--------------------------------------------------")
+    print("----------------------------------------------")
     
-    # Safely compute Log Income if median_household_income exists and is non-null
+    
     if 'median_household_income' in df.columns:
         valid_inc = df['median_household_income'] > 0
         df['log_income'] = np.where(valid_inc, np.log(df['median_household_income']), np.nan)
 
-    # Dynamic control selection (filters out columns with insufficient non-null observations)
     candidate_controls = ['eitc_rate_pct', 'poverty_rate_pct', 'lep_rate_pct', 'log_income', 'median_household_income']
     active_controls = []
     
@@ -82,9 +75,6 @@ def run_econometric_analysis():
     print(f"  Model F-Stat p-value:     {multi_model.f_pvalue:.4e}")
     print("\n")
 
-    # ----------------------------------------------------
-    # 3. CAPITAL LEAKAGE QUARTILE ANALYSIS
-    # ----------------------------------------------------
     df['eitc_rank'] = df['eitc_rate_pct'].rank(method='first')
     df['eitc_quartile'] = pd.qcut(
         df['eitc_rank'], 
@@ -96,13 +86,10 @@ def run_econometric_analysis():
     q4_leakage = df[df['eitc_quartile'] == 'Q4 (Highest)']['capital_leakage_dollars'].sum()
     q4_share = (q4_leakage / total_state_leakage) * 100.0 if total_state_leakage > 0 else 0.0
 
-    # ----------------------------------------------------
-    # 4. EXPORT SUMMARY REPORT
-    # ----------------------------------------------------
     os.makedirs(os.path.dirname(OUTPUT_SUMMARY_PATH), exist_ok=True)
     with open(OUTPUT_SUMMARY_PATH, "w") as f:
         f.write("CIVIC DATA ECONOMICS: STATISTICAL & ECONOMETRIC SUMMARY\n")
-        f.write("========================================================\n\n")
+        f.write("==============================================\n\n")
         f.write(f"Sample Size (N): {len(df_reg)} valid ZCTAs (Total Universe: {len(df)})\n\n")
         
         f.write("1. BIVARIATE REGRESSION SPECIFICATION:\n")
