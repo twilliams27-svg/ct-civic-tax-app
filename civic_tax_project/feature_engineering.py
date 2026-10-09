@@ -5,7 +5,7 @@ import numpy as np
 
 INPUT_TAX_PATH = "data/processed/01_cleaned_tax_data.csv"
 OUTPUT_FEATURE_PATH = "data/processed/02_feature_matrix.csv"
-TARGET_ZIP = "06608"  # Bridgeport, CT
+TARGET_ZIP = "06608"
 
 AVG_TAX_PREP_FEE = 250.0
 
@@ -65,7 +65,7 @@ def build_feature_matrix():
         df_merged['poverty_rate_pct'] = np.nan
         df_merged['lep_rate_pct'] = np.nan
 
-    # Force 0–100 Percentage Scale for both metrics
+    
     df_merged['paid_prep_rate_pct'] = (
         df_merged['paid_prep_returns'] / df_merged['total_returns'].replace(0, np.nan)
     ) * 100.0
@@ -74,11 +74,10 @@ def build_feature_matrix():
         df_merged['eitc_returns'] / df_merged['total_returns'].replace(0, np.nan)
     ) * 100.0
 
-    # Capital Leakage Calculation
+    
     df_merged['estimated_eitc_paid_returns'] = df_merged['eitc_returns'] * (df_merged['paid_prep_rate_pct'] / 100.0)
     df_merged['capital_leakage_dollars'] = df_merged['estimated_eitc_paid_returns'] * AVG_TAX_PREP_FEE
 
-    # Rank-based Quartile Segmentation
     df_merged['eitc_rank'] = df_merged['eitc_rate_pct'].rank(method='first')
     df_merged['eitc_quartile'] = pd.qcut(
         df_merged['eitc_rank'],
@@ -94,7 +93,6 @@ def build_feature_matrix():
             labels=['Q1 (Lowest)', 'Q2 (Low-Mid)', 'Q3 (Mid-High)', 'Q4 (Highest)']
         )
 
-    # Rounding
     df_merged['paid_prep_rate_pct'] = df_merged['paid_prep_rate_pct'].round(2)
     df_merged['eitc_rate_pct'] = df_merged['eitc_rate_pct'].round(2)
     df_merged['poverty_rate_pct'] = df_merged['poverty_rate_pct'].round(2)
