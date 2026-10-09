@@ -8,7 +8,7 @@ import statsmodels.api as sm
 
 INPUT_FEATURE_PATH = "data/processed/02_feature_matrix.csv"
 OUTPUT_DIR = "reports/figures"
-TARGET_ZIP = "06608"  # Bridgeport, CT
+TARGET_ZIP = "06608"
 
 plt.style.use('seaborn-v0_8-whitegrid' if 'seaborn-v0_8-whitegrid' in plt.style.available else 'default')
 NAVY = "#1B3962"
@@ -32,7 +32,6 @@ def generate_visualizations():
         labels=['Q1 (Lowest)', 'Q2 (Mid-Low)', 'Q3 (Mid-High)', 'Q4 (Highest)']
     )
 
-    # Calculate actual OLS parameters on 0-100 percentage scale
     df_valid = df.dropna(subset=['eitc_rate_pct', 'paid_prep_rate_pct']).copy()
     X_ols = sm.add_constant(df_valid['eitc_rate_pct'])
     model = sm.OLS(df_valid['paid_prep_rate_pct'], X_ols).fit()
@@ -41,9 +40,6 @@ def generate_visualizations():
     r2 = model.rsquared
     pval = model.f_pvalue
 
-    # -------------------------------------------------------------------------
-    # FIGURE 1: BIVARIATE OLS SCATTER PLOT
-    # -------------------------------------------------------------------------
     print("[*] Generating Figure 1: Bivariate OLS Scatter Plot...")
     fig, ax = plt.subplots(figsize=(9.5, 6), dpi=300)
 
@@ -115,9 +111,6 @@ def generate_visualizations():
     plt.close()
     print(f"[+] Saved Figure 1: {fig1_path}")
 
-    # -------------------------------------------------------------------------
-    # FIGURE 2: CAPITAL LEAKAGE BY EITC UTILIZATION QUARTILE
-    # -------------------------------------------------------------------------
     print("[*] Generating Figure 2: Capital Leakage Bar Chart...")
     
     quartile_summary = df.groupby('eitc_quartile', observed=False)['capital_leakage_dollars'].sum().reset_index()
