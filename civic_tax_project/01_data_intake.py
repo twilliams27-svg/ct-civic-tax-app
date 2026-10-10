@@ -15,7 +15,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
 }
 
-# IRS SOI Field Definitions:
+# IRS SOI field definitions:
 # N1: Total returns
 # N59660/N07180: EITC returns count
 # A59660/A07180: EITC amount ($ in thousands)
