@@ -14,7 +14,7 @@ def run_econometric_analysis():
     df = pd.read_csv(INPUT_FEATURE_PATH)
     df['zip_code'] = df['zip_code'].astype(str).str.zfill(5)
     
-    print(" STEP 3: ECONOMETRIC MODELING & STATISTICAL ANALYSIS")
+    print("3: ECONOMETRIC MODELING & STATISTICAL ANALYSIS")
     print(f" Dataset Universe: N = {len(df)} Connecticut ZIP Codes")
 
     df_bivariate = df.dropna(subset=['eitc_rate_pct', 'paid_prep_rate_pct']).copy()
@@ -27,13 +27,13 @@ def run_econometric_analysis():
     
     bivariate_model = sm.OLS(Y_var, X_ols).fit(cov_type='HC1')
 
-    print("[1] BIVARIATE OLS REGRESSION (Baseline)")
+    print("BIVARIATE OLS REGRESSION (Baseline)")
     print(f" Formula: PaidPrepRate = {bivariate_model.params['const']:.2f} + {bivariate_model.params['eitc_rate_pct']:.2f}*(EITC_Rate)")
     print(f" R-Squared: {bivariate_model.rsquared:.4f} (Explains {bivariate_model.rsquared*100:.2f}% of variance)")
     print(f" p-value:   {bivariate_model.f_pvalue:.4e}")
     print("\n")
 
-    print("[2] MULTIVARIATE OLS REGRESSION (Demographic & Economic Controls)")
+    print("MULTIVARIATE OLS REGRESSION (Demographic & Economic Controls)")
     
     
     if 'median_household_income' in df.columns:
@@ -49,13 +49,13 @@ def run_econometric_analysis():
                 continue
             active_controls.append(col)
 
-    print(f"[*] Active Model Controls: {active_controls}")
+    print(f"Active Model Controls: {active_controls}")
 
     req_cols = ['paid_prep_rate_pct'] + active_controls
     df_reg = df.dropna(subset=req_cols).copy()
 
     if len(df_reg) == 0:
-        print("[!] Warning: Insufficient observations for multivariate OLS. Falling back to baseline bivariate model.")
+        print("Warning: Insufficient observations for multivariate OLS. Falling back to baseline bivariate model.")
         multi_model = bivariate_model
         active_controls = ['eitc_rate_pct']
         df_reg = df_bivariate.copy()
@@ -66,9 +66,9 @@ def run_econometric_analysis():
 
     print(multi_model.summary().tables[1])
     print(f"\n Multivariate Model Fit Metrics:")
-    print(f"  R-Squared (R²):          {multi_model.rsquared:.4f} ({multi_model.rsquared*100:.2f}% explained variance)")
+    print(f"  R Squared (R²):          {multi_model.rsquared:.4f} ({multi_model.rsquared*100:.2f}% explained variance)")
     print(f"  Adjusted R-Squared:       {multi_model.rsquared_adj:.4f}")
-    print(f"  Model F-Stat p-value:     {multi_model.f_pvalue:.4e}")
+    print(f"  Model F Stat p value:     {multi_model.f_pvalue:.4e}")
     print("\n")
 
     df['eitc_rank'] = df['eitc_rate_pct'].rank(method='first')
