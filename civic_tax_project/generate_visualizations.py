@@ -109,9 +109,9 @@ def generate_visualizations():
     plt.tight_layout(rect=[0, 0.03, 1, 1])
     plt.savefig(fig1_path, dpi=300)
     plt.close()
-    print(f"[+] Saved Figure 1: {fig1_path}")
+    print(f"Saved Figure 1: {fig1_path}")
 
-    print("[*] Generating Figure 2: Capital Leakage Bar Chart...")
+    print("Generating Figure 2: Capital Leakage Bar Chart...")
     
     quartile_summary = df.groupby('eitc_quartile', observed=False)['capital_leakage_dollars'].sum().reset_index()
     total_leakage = quartile_summary['capital_leakage_dollars'].sum()
@@ -147,7 +147,7 @@ def generate_visualizations():
     ax.set_ylim(0, max(quartile_summary['capital_leakage_dollars'] / 1000.0) * 1.25)
     ax.yaxis.grid(True, linestyle='--', alpha=0.5)
 
-    plt.figtext(0.1, 0.01, "*Note: Capital leakage calculated assuming average commercial preparation fee of $250/return.", fontsize=8, color=SLATE, style='italic')
+    plt.figtext(0.1, 0.01, "Capital leakage calculated assuming average commercial preparation fee of $250/return.", fontsize=8, color=SLATE, style='italic')
 
     fig2_path = os.path.join(OUTPUT_DIR, "fig2_capital_leakage.png")
     plt.tight_layout(rect=[0, 0.03, 1, 1])
