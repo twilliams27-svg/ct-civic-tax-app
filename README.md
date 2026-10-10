@@ -16,3 +16,10 @@ The backend pulls from real world administrative and demographic data:
 - IRS SOI Line Item Tax Data (2021) for filing and credit statistics
 - US Census ACS 5 year Estimates for local socioeconomic indicators
 - Econometric modeling: includes and OLS regression scatter plot to show the relationship between paid preparer reliance and EITC utilization rates. For quality analysis, the model explicitly notes its low R squared and points out the potential omitted variable bias as to not hide behind messy correlations.
+
+## Technology I used
+- **Python** for core programming language used for data processing
+- **Streamlit** used to build and host the interactive component
+- **Pandas and NumPy** for data cleaning, aggregation, and computations
+- **Geopandas and Folium** for spatial data processing and interactive mapping for the CT zip code tabulation areas
+- **Matplotlib and Seaborn** for statistic data representation, OLS regression plotting, and custom style
