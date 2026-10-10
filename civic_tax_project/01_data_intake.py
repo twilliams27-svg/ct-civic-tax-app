@@ -24,11 +24,11 @@ HEADERS = {
 REQUIRED_COLS = ['STATE', 'ZIPCODE', 'AGI_STUB', 'N1', 'N59660', 'A59660', 'N07180', 'A07180', 'PREP', 'N11902', 'A11902']
 
 def fetch_and_process_irs_data(target_state: str = TARGET_STATE):
-    print(f"[*] Initializing IRS SOI Data Intake for State: {target_state}")
+    print(f"Initializing IRS SOI Data Intake for State: {target_state}")
     
     df_raw = None
     for url in IRS_DATA_URLS:
-        print(f"[*] Attempting download from: {url}")
+        print(f"Attempting download from: {url}")
         try:
             res = requests.get(url, headers=HEADERS, timeout=60)
             if res.status_code == 200:
@@ -44,10 +44,10 @@ def fetch_and_process_irs_data(target_state: str = TARGET_STATE):
                     low_memory=False
                 )
                 df_raw.columns = [c.upper() for c in df_raw.columns]
-                print(f"[+] Download successful! Raw Shape: {df_raw.shape}")
+                print(f"Download successful! Raw Shape: {df_raw.shape}")
                 break
         except Exception as e:
-            print(f"[-] Download attempt failed: {e}")
+            print(f"Download attempt failed: {e}")
             
     if df_raw is None:
         raise RuntimeError("Failed to fetch IRS dataset from configured URLs.")
@@ -99,7 +99,7 @@ def fetch_and_process_irs_data(target_state: str = TARGET_STATE):
 
     os.makedirs(os.path.dirname(PROCESSED_DATA_PATH), exist_ok=True)
     df_clean.to_csv(PROCESSED_DATA_PATH, index=False)
-    print(f"[✓] Step 1 Complete! Active ZIP Count: N = {len(df_clean)}")
+    print(f"Step 1 Complete. Active ZIP Count: N = {len(df_clean)}")
     
     sample = df_clean[df_clean['zip_code'] == TARGET_ZIP]
     if not sample.empty:
