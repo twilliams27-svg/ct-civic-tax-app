@@ -14,7 +14,7 @@ HEADERS = {
 }
 
 def fetch_census_acs_data(target_zips_list):
-    print("[*] Fetching Census ACS Demographic Data via API...")
+    print("Fetching Census ACS Demographic Data via API...")
     acs_vars = ["NAME", "B17001_001E", "B17001_002E", "B19013_001E"]
     var_str = ",".join(acs_vars)
     census_url = f"https://api.census.gov/data/2021/acs/acs5?get={var_str}&for=zip%20code%20tabulation%20area:*"
@@ -44,7 +44,7 @@ def fetch_census_acs_data(target_zips_list):
         else:
             return None
     except Exception as e:
-        print(f"[-] Census API fetch failed: {e}")
+        print(f"Census API fetch failed: {e}")
         return None
 
 def build_feature_matrix():
@@ -100,7 +100,7 @@ def build_feature_matrix():
 
     os.makedirs(os.path.dirname(OUTPUT_FEATURE_PATH), exist_ok=True)
     df_merged.to_csv(OUTPUT_FEATURE_PATH, index=False)
-    print(f"[✓] Step 2 Complete! Saved feature matrix to: {OUTPUT_FEATURE_PATH}")
+    print(f"Step 2 Complete! Saved feature matrix to: {OUTPUT_FEATURE_PATH}")
 
     target_row = df_merged[df_merged['zip_code'] == TARGET_ZIP]
     if not target_row.empty:
