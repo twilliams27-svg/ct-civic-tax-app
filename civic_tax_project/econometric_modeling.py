@@ -14,10 +14,8 @@ def run_econometric_analysis():
     df = pd.read_csv(INPUT_FEATURE_PATH)
     df['zip_code'] = df['zip_code'].astype(str).str.zfill(5)
     
-    print("==============================================")
     print(" STEP 3: ECONOMETRIC MODELING & STATISTICAL ANALYSIS")
     print(f" Dataset Universe: N = {len(df)} Connecticut ZIP Codes")
-    print("=============================================\n")
 
     df_bivariate = df.dropna(subset=['eitc_rate_pct', 'paid_prep_rate_pct']).copy()
     X_var = df_bivariate['eitc_rate_pct']
@@ -30,14 +28,12 @@ def run_econometric_analysis():
     bivariate_model = sm.OLS(Y_var, X_ols).fit(cov_type='HC1')
 
     print("[1] BIVARIATE OLS REGRESSION (Baseline)")
-    print("----------------------------------------------")
     print(f" Formula: PaidPrepRate = {bivariate_model.params['const']:.2f} + {bivariate_model.params['eitc_rate_pct']:.2f}*(EITC_Rate)")
     print(f" R-Squared: {bivariate_model.rsquared:.4f} (Explains {bivariate_model.rsquared*100:.2f}% of variance)")
     print(f" p-value:   {bivariate_model.f_pvalue:.4e}")
     print("\n")
 
     print("[2] MULTIVARIATE OLS REGRESSION (Demographic & Economic Controls)")
-    print("----------------------------------------------")
     
     
     if 'median_household_income' in df.columns:
@@ -89,7 +85,6 @@ def run_econometric_analysis():
     os.makedirs(os.path.dirname(OUTPUT_SUMMARY_PATH), exist_ok=True)
     with open(OUTPUT_SUMMARY_PATH, "w") as f:
         f.write("CIVIC DATA ECONOMICS: STATISTICAL & ECONOMETRIC SUMMARY\n")
-        f.write("==============================================\n\n")
         f.write(f"Sample Size (N): {len(df_reg)} valid ZCTAs (Total Universe: {len(df)})\n\n")
         
         f.write("1. BIVARIATE REGRESSION SPECIFICATION:\n")
@@ -110,7 +105,7 @@ def run_econometric_analysis():
         f.write(f"   Q4 High-EITC Quartile Leakage:     ${q4_leakage:,.2f} ({q4_share:.1f}% of state total)\n")
         f.write("   Policy Implication: Commercial tax prep fees act as a regressive levy concentrated in high-need ZCTAs.\n")
     
-    print(f"[✓] Step 3 Complete! Statistical summary exported to: {OUTPUT_SUMMARY_PATH}")
+    print(f"Step 3 complete. Stat summary exported to: {OUTPUT_SUMMARY_PATH}")
 
 if __name__ == "__main__":
     run_econometric_analysis()
