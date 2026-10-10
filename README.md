@@ -6,7 +6,7 @@ When lower income filers rely a lot on paid commercial tax preparation, a signif
 
 
 **The Interactive Streamlit App**
-To make the data accessible, I built a live app using Streamlit (as usual).
+To make the data accessible, I built a live app using Streamlit.
 - Users can search or click through various Connecticut ZIP codes to see specific local metrics, such as EITC utilization rates and reliance on paid preparers.
 - An interactive map helps visualize geographically across Connecticut ZCTAs, making areas where commercial preparation fees disproportionally impact communities.
 - The dashboard groups data into utilization quartiles to show how capital leakage scales across different socioeconomic tiers throughout the state.
