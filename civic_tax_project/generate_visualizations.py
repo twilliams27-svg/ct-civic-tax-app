@@ -40,7 +40,7 @@ def generate_visualizations():
     r2 = model.rsquared
     pval = model.f_pvalue
 
-    print("[*] Generating Figure 1: Bivariate OLS Scatter Plot...")
+    print("Generating Figure 1: Bivariate OLS Scatter Plot...")
     fig, ax = plt.subplots(figsize=(9.5, 6), dpi=300)
 
     sns.scatterplot(
