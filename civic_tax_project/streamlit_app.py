@@ -158,11 +158,3 @@ if selected_zip != "All Connecticut ZCTAs":
     ).add_to(m)
 
 st_folium(m, width="100%", height=580, returned_objects=[])
-
-st.divider()
-st.subheader("Embed Map on Substack / Policy Reports")
-if st.button("Generate HTML Map Export"):
-    reports_dir = BASE_DIR / "reports"
-    reports_dir.mkdir(exist_ok=True)
-    m.save(str(reports_dir / "ct_tax_access_map.html"))
-    st.success("Saved `reports/ct_tax_access_map.html`!")
