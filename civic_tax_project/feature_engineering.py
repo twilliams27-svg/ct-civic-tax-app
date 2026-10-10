@@ -105,7 +105,7 @@ def build_feature_matrix():
     target_row = df_merged[df_merged['zip_code'] == TARGET_ZIP]
     if not target_row.empty:
         r = target_row.iloc[0]
-        print(f"\n--- Target ZIP ({TARGET_ZIP}) Summary ---")
+        print(f"Target ZIP ({TARGET_ZIP}) Summary")
         print(f" Total Returns:             {int(r['total_returns']):,}")
         print(f" EITC Returns:              {int(r['eitc_returns']):,} ({r['eitc_rate_pct']:.1f}%)")
         print(f" Paid Preparer Rate:        {r['paid_prep_rate_pct']:.1f}%")
