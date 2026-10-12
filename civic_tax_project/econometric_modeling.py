@@ -14,7 +14,7 @@ def run_econometric_analysis():
     df = pd.read_csv(INPUT_FEATURE_PATH)
     df['zip_code'] = df['zip_code'].astype(str).str.zfill(5)
     
-    print("3: ECONOMETRIC MODELING & STATISTICAL ANALYSIS")
+    print("ECONOMETRIC MODELING & STATISTICAL ANALYSIS")
     print(f" Dataset Universe: N = {len(df)} Connecticut ZIP Codes")
 
     df_bivariate = df.dropna(subset=['eitc_rate_pct', 'paid_prep_rate_pct']).copy()
